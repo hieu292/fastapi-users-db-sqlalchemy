@@ -19,7 +19,7 @@ UUID_ID = uuid.UUID
 class SQLAlchemyBaseUserTable(Generic[ID]):
     """Base SQLAlchemy users table definition."""
 
-    __tablename__ = "user"
+    __tablename__ = "us"
 
     if TYPE_CHECKING:  # pragma: no cover
         id: ID
@@ -29,17 +29,17 @@ class SQLAlchemyBaseUserTable(Generic[ID]):
         is_superuser: bool
         is_verified: bool
     else:
-        email: Mapped[str] = mapped_column(
+        email: Mapped[str] = mapped_column("e",
             String(length=320), unique=True, index=True, nullable=False
         )
-        hashed_password: Mapped[str] = mapped_column(
+        hashed_password: Mapped[str] = mapped_column("h",
             String(length=1024), nullable=False
         )
-        is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
-        is_superuser: Mapped[bool] = mapped_column(
+        is_active: Mapped[bool] = mapped_column("ia", Boolean, default=True, nullable=False)
+        is_superuser: Mapped[bool] = mapped_column("is",
             Boolean, default=False, nullable=False
         )
-        is_verified: Mapped[bool] = mapped_column(
+        is_verified: Mapped[bool] = mapped_column("iv",
             Boolean, default=False, nullable=False
         )
 
@@ -48,7 +48,7 @@ class SQLAlchemyBaseUserTableUUID(SQLAlchemyBaseUserTable[UUID_ID]):
     if TYPE_CHECKING:  # pragma: no cover
         id: UUID_ID
     else:
-        id: Mapped[UUID_ID] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
+        id: Mapped[UUID_ID] = mapped_column("i", GUID, primary_key=True, default=uuid.uuid4)
 
 
 class SQLAlchemyBaseOAuthAccountTable(Generic[ID]):
@@ -65,18 +65,18 @@ class SQLAlchemyBaseOAuthAccountTable(Generic[ID]):
         account_id: str
         account_email: str
     else:
-        oauth_name: Mapped[str] = mapped_column(
+        oauth_name: Mapped[str] = mapped_column("on",
             String(length=100), index=True, nullable=False
         )
-        access_token: Mapped[str] = mapped_column(String(length=1024), nullable=False)
-        expires_at: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
-        refresh_token: Mapped[Optional[str]] = mapped_column(
+        access_token: Mapped[str] = mapped_column("at", String(length=1024), nullable=False)
+        expires_at: Mapped[Optional[int]] = mapped_column("ea", Integer, nullable=True)
+        refresh_token: Mapped[Optional[str]] = mapped_column("rt",
             String(length=1024), nullable=True
         )
-        account_id: Mapped[str] = mapped_column(
+        account_id: Mapped[str] = mapped_column("ai",
             String(length=320), index=True, nullable=False
         )
-        account_email: Mapped[str] = mapped_column(String(length=320), nullable=False)
+        account_email: Mapped[str] = mapped_column("ae", String(length=320), nullable=False)
 
 
 class SQLAlchemyBaseOAuthAccountTableUUID(SQLAlchemyBaseOAuthAccountTable[UUID_ID]):
@@ -84,11 +84,11 @@ class SQLAlchemyBaseOAuthAccountTableUUID(SQLAlchemyBaseOAuthAccountTable[UUID_I
         id: UUID_ID
         user_id: UUID_ID
     else:
-        id: Mapped[UUID_ID] = mapped_column(GUID, primary_key=True, default=uuid.uuid4)
+        id: Mapped[UUID_ID] = mapped_column("i", GUID, primary_key=True, default=uuid.uuid4)
 
         @declared_attr
         def user_id(cls) -> Mapped[GUID]:
-            return mapped_column(
+            return mapped_column("ui",
                 GUID, ForeignKey("user.id", ondelete="cascade"), nullable=False
             )
 
